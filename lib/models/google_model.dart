@@ -14,4 +14,10 @@ class GoogleModel {
     this.email = account.email;
     this.id = account.id;
   }
+  GoogleModel.fromFirebaseStore(Map<dynamic, dynamic> data){
+    this.photoUrl = data['photoUrl'];
+    this.displayName = data['displayName'];
+    this.email = data['email'];
+    this.id = data['id'];
+  }
 }
