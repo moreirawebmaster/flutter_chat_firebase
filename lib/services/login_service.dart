@@ -1,9 +1,10 @@
-import 'package:flutter/widgets.dart';
+import 'package:bloc_pattern/bloc_pattern.dart';
+
 import 'package:flutter_chat/models/google_model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginService with ChangeNotifier {
+class LoginService extends BlocBase {
   GoogleSignIn _googleSignIn;
   FirebaseAuth _firebaseAuth;
   GoogleModel _user;
@@ -38,8 +39,7 @@ class LoginService with ChangeNotifier {
   }
 
   Future doSignInFireStore(GoogleSignInAccount account) async {
-    if(account == null)
-      return;
+    if (account == null) return;
     var accountLogin = await account?.authentication;
     var credential =
         GoogleAuthProvider.getCredential(accessToken: accountLogin.accessToken, idToken: accountLogin.idToken);

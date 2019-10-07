@@ -1,10 +1,8 @@
-import 'dart:collection';
-
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/services/chat_service.dart';
 import 'package:flutter_chat/services/login_service.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 
 import 'login_page.dart';
 import 'models/chat_model.dart';
@@ -33,8 +31,8 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    chatService = Provider.of<ChatService>(context, listen: false);
-    userService = Provider.of<LoginService>(context, listen: false);
+    chatService = BlocProvider.getBloc<ChatService>();
+    userService = BlocProvider.getBloc<LoginService>();
 
     print('Chat Rebuild...');
     return Scaffold(
@@ -59,11 +57,12 @@ class _ChatPageState extends State<ChatPage> {
           children: <Widget>[
             Expanded(
               child: SingleChildScrollView(
-                child: Selector<ChatService, UnmodifiableListView<ChatModel>>(
-                  selector: (context, chatService) => chatService.messages,
-                  builder: (context, list, child) {
+                child: Consumer<ChatService>(
+                  distinct: (oldValue, newValue) => oldValue.messages != newValue.messages,
+                  
+                  builder: (context, chatService) {
                     return Column(
-                        children: list.map((chat) {
+                        children: chatService.messages.map((chat) {
                       return Align(
                         alignment:
                             chat.user.id == userService.currentUser.id ? Alignment.centerRight : Alignment.centerLeft,
@@ -245,11 +244,11 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Selector<ChatService, bool> buildSend() {
-    return Selector<ChatService, bool>(
-      selector: (context, chatService) => chatService.textWithData,
-      builder: (context, textWithData, child) {
-        return textWithData
+  Consumer<ChatService> buildSend() {
+    return Consumer<ChatService>(
+      distinct: (oldValue, newValue) => oldValue.textWithData != newValue.textWithData,
+      builder: (context, chatService) {
+        return chatService.textWithData
             ? IconButton(
                 icon: Icon(
                   Icons.send,

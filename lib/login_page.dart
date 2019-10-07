@@ -1,20 +1,20 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/services/login_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 
 import 'chat_page.dart';
 
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    LoginService service = Provider.of<LoginService>(context);
+    LoginService service = BlocProvider.getBloc<LoginService>();
 
     return Container(
       decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.blue, Colors.lightBlue])),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
         Consumer<LoginService>(
-          builder: (context, login, child) {
+          builder: (context, login) {
             return login.isLogged ? buttonInitializeChat(context) : buttonGoogleSignIn(service, context);
           },
         ),
